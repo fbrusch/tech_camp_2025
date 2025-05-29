@@ -1,37 +1,17 @@
 import pygame
 import sys
 
-# Inizializza Pygame
+# Initialize pygame
 pygame.init()
 
-# Imposta dimensioni e crea la finestra
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Demo Pygame")
+# Create screen/window
+screen = pygame.display.set_mode((800, 600))
 
-# Definisci un colore (RGB)
-WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
+# Draw a rectangle
+pygame.draw.rect(screen, (0,0,255), (100, 100, 200, 150))
+pygame.display.flip()
 
-# Definisci un rettangolo (x, y, larghezza, altezza)
-rect = pygame.Rect(100, 100, 200, 150)
+# Do nothing forever!
 
-# Loop principale
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+while True: pass
 
-    # Riempi lo sfondo
-    screen.fill(WHITE)
-
-    # Disegna il rettangolo
-    pygame.draw.rect(screen, BLUE, rect)
-
-    # Aggiorna il display
-    pygame.display.flip()
-
-# Chiudi Pygame
-pygame.quit()
-sys.exit()
