@@ -3,7 +3,7 @@ import random
 
 pygame.init()
 
-WIDTH, HEIGHT = 400, 600
+WIDTH, HEIGHT = 800, 600
 BIRD_SIZE = 20
 GRAVITY = 0.25
 JUMP_STRENGHT = -5
@@ -21,10 +21,16 @@ bird_x = 100
 bird_y = HEIGHT // 2
 running = True
 bird_velocity = 0 
-pipe_x = WIDTH
-pipe_height = HEIGHT // 2
+#pipe_x = WIDTH
+#pipe_height = HEIGHT // 2
+
+pipes = [[WIDTH//3, HEIGHT//2], [WIDTH//3*2-PIPE_WIDTH, HEIGHT // 3], [WIDTH, HEIGHT // 2]]
+
 
 clock = pygame.time.Clock()
+
+time = 0
+
 
 def render():
 
@@ -33,10 +39,11 @@ def render():
 
     # draw higher pipe
 
-    pygame.draw.rect(screen, GREY, (pipe_x, 0, PIPE_WIDTH, pipe_height))
+    for pipe in pipes:
+        pygame.draw.rect(screen, GREY, (pipe[0], 0, PIPE_WIDTH, pipe[1]))
 
 
-    pygame.draw.rect(screen, GREY, (pipe_x, pipe_height + PIPE_GAP, PIPE_WIDTH, HEIGHT))
+        pygame.draw.rect(screen, GREY, (pipe[0], pipe[1] + PIPE_GAP, PIPE_WIDTH, HEIGHT))
 
 
 def point_in_rect(x, y, xr, yr, w, h):
@@ -49,15 +56,24 @@ def bird_touches_pipe(bird_x, bird_y, pipe_x, pipe_y, pipe_width, pipe_height):
     point_in_rect(bird_x + BIRD_SIZE, bird_y + BIRD_SIZE, pipe_x, pipe_y, pipe_width, pipe_height)
     
 
-def bird_touches_pipes(): 
-    tocca_sopra = bird_touches_pipe(bird_x, bird_y, pipe_x, 0, PIPE_WIDTH, pipe_height) 
-    tocca_sotto = bird_touches_pipe(bird_x, bird_y, pipe_x, pipe_height + PIPE_GAP, PIPE_WIDTH, HEIGHT)
-    if tocca_sopra or tocca_sotto:
-        print("tocca sopra", tocca_sopra)
-        print("tocca_sotto", tocca_sotto)
-    return tocca_sotto or tocca_sopra
+def bird_touches_pipes():
+    for pipe in pipes: 
+        tocca_sopra = bird_touches_pipe(bird_x, bird_y, pipe[0], 0, PIPE_WIDTH, pipe[1]) 
+        tocca_sotto = bird_touches_pipe(bird_x, bird_y, pipe[0], pipe[1] + PIPE_GAP, PIPE_WIDTH, HEIGHT)
+        if tocca_sopra or tocca_sotto:
+            print("tocca sopra", tocca_sopra)
+            print("tocca_sotto", tocca_sotto)
+            return True
+    
+    return False
 
 while running:
+
+    time += 1
+
+    if time > 250:
+
+        PIPE_GAP = BIRD_SIZE * 4
 
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -70,11 +86,12 @@ while running:
     if bird_y > HEIGHT or bird_y < 0:
         running = False
 
-    pipe_x -= HORIZONTAL_SPEED
+    for pipe in pipes:
+        pipe[0] -= HORIZONTAL_SPEED
     
-    if pipe_x + PIPE_WIDTH < 0:
-        pipe_x = WIDTH
-        pipe_height = random.randint(10, HEIGHT - 2 * BIRD_SIZE)
+        if pipe[0] + PIPE_WIDTH < 0:
+            pipe[0] = WIDTH
+            pipe[1] = random.randint(10, HEIGHT - 2 * BIRD_SIZE)
 
     if bird_touches_pipes():
         running = False
